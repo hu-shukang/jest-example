@@ -14,7 +14,7 @@ describe('user.service', () => {
     jest.restoreAllMocks(); // spyをクリア
   });
 
-  describe('getUser', () => {
+  describe('get', () => {
     it('成功', async () => {
       const userId = 'a9490427-ae24-46f8-b8e8-062d2ade456f';
       const userModel: UserModel = {
@@ -28,7 +28,7 @@ describe('user.service', () => {
         status: 200,
       });
 
-      const result = await User.getUser(userId);
+      const result = await User.get(userId);
       expect(result).toEqual(userModel);
       expect(mockedGet).toHaveBeenCalledWith(`/user/${userId}`);
     });
@@ -41,7 +41,7 @@ describe('user.service', () => {
       } as AxiosResponse);
 
       const mockedGet = jest.mocked(HTTP.get).mockRejectedValue(error);
-      const action = User.getUser(userId);
+      const action = User.get(userId);
       await expect(action).rejects.toThrow('no found user');
       expect(mockedGet).toHaveBeenCalledWith(`/user/${userId}`);
     });
@@ -56,7 +56,7 @@ describe('user.service', () => {
       const mockedGet = jest.mocked(HTTP.get).mockRejectedValue(error);
 
       try {
-        await User.getUser(userId);
+        await User.get(userId);
       } catch (e) {
         expect((e as AxiosError).message).toEqual('no found user');
       }
@@ -64,7 +64,7 @@ describe('user.service', () => {
     });
   });
 
-  describe('addUser', () => {
+  describe('add', () => {
     it('成功', async () => {
       const userId = '815ad516-e3a2-44ed-ab0f-81236fdafbe3';
       const mockedGenerateUUID = jest.mocked(generateUUID).mockReturnValue(userId);
@@ -72,7 +72,7 @@ describe('user.service', () => {
         name: 'abc',
         address: '東京都',
       };
-      await User.addUser(input);
+      await User.add(input);
       const mockedPost = jest.mocked(HTTP.post).mockResolvedValue({ status: 200 });
 
       expect(mockedGenerateUUID).toHaveBeenCalledTimes(1);
@@ -80,10 +80,10 @@ describe('user.service', () => {
     });
   });
 
-  describe('updateUser', () => {
+  describe('update', () => {
     it('成功', async () => {
       const userId = '815ad516-e3a2-44ed-ab0f-81236fdafbe3';
-      const mockedGetUser = jest.spyOn(User, 'getUser').mockResolvedValue({
+      const mockedGetUser = jest.spyOn(User, 'get').mockResolvedValue({
         userId,
         name: 'abc',
         address: '東京都',
@@ -93,21 +93,21 @@ describe('user.service', () => {
         address: '大阪',
       };
 
-      await User.updateUser(userId, input);
+      await User.update(userId, input);
 
       expect(mockedGetUser).toHaveBeenCalledWith(userId);
       expect(HTTP.put).toHaveBeenCalledWith(`/user/${userId}`, { name: 'abc', address: '大阪' });
     });
   });
 
-  describe('deleteUser', () => {
+  describe('delete', () => {
     it('成功', async () => {
       const userId = '815ad516-e3a2-44ed-ab0f-81236fdafbe3';
       const callback = jest.fn().mockResolvedValue('OK');
       const mockedDelete = jest.mocked(HTTP.delete).mockResolvedValue({
         status: 200,
       });
-      const result = await User.deleteUser(userId, callback);
+      const result = await User.del(userId, callback);
 
       expect(mockedDelete).toHaveBeenCalledWith(`/user/${userId}`);
       expect(callback).toHaveBeenCalledWith(userId);
