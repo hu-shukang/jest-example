@@ -15,11 +15,6 @@ describe('user.service', () => {
   });
 
   describe('getUser', () => {
-    /**
-     * テスト観点：
-     * - HTTP.get関数のパラメータが正しいか
-     * - HTTP.get関数のレスポンスを正しく戻しているか
-     */
     it('成功', async () => {
       const userId = 'a9490427-ae24-46f8-b8e8-062d2ade456f';
       const userModel: UserModel = {
